@@ -17,13 +17,13 @@
 */
 
 // Vision UI Dashboard React base styles
-import colors from "assets/theme/base/colors";
-import borders from "assets/theme/base/borders";
-import boxShadows from "assets/theme/base/boxShadows";
+import colors from "../base/colors";
+import borders from "../base/borders";
+import boxShadows from "../base/boxShadows";
 
 // Vision UI Dashboard React helper functions
-import linearGradient from "assets/theme/functions/linearGradient";
-import pxToRem from "assets/theme/functions/pxToRem";
+import linearGradient from "../functions/linearGradient";
+import pxToRem from "../functions/pxToRem";
 
 const { light, white, sliderColors, black, gradients } = colors;
 const { borderRadius, borderWidth } = borders;

@@ -17,11 +17,11 @@
 */
 
 // Vision UI Dashboard React Base Styles
-import colors from "assets/theme/base/colors";
-import typography from "assets/theme/base/typography";
+import colors from "../../base/colors";
+import typography from "../../base/typography";
 
 // Vision UI Dashboard React Helper Functions
-import pxToRem from "assets/theme/functions/pxToRem";
+import pxToRem from "../../functions/pxToRem";
 
 const { transparent, primary, grey, text } = colors;
 const { size } = typography;

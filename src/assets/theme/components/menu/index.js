@@ -17,14 +17,14 @@
 */
 
 // Vision UI Dashboard React base styles
-import boxShadows from "assets/theme/base/boxShadows";
-import typography from "assets/theme/base/typography";
-import colors from "assets/theme/base/colors";
-import borders from "assets/theme/base/borders";
-import linearGradient from "assets/theme/functions/linearGradient";
+import boxShadows from "../../base/boxShadows";
+import typography from "../../base/typography";
+import colors from "../../base/colors";
+import borders from "../../base/borders";
+import linearGradient from "../../functions/linearGradient";
 
 // Vision UI Dashboard React helper functions
-import pxToRem from "assets/theme/functions/pxToRem";
+import pxToRem from "../../functions/pxToRem";
 
 const { borderWidth } = borders;
 const { lg } = boxShadows;

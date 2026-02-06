@@ -17,7 +17,7 @@
 */
 
 // Vision UI Dashboard React base styles
-import borders from "assets/theme/base/borders";
+import borders from "../base/borders";
 
 const { borderRadius } = borders;
 

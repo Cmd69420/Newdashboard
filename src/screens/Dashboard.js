@@ -22,7 +22,12 @@ import SlotExpansionPage from './Slot';
 import BankAccountSettings from './AdminBankAccountSettings';
 import PaymentSummaryDashboard from "./PaymentSummaryDashboard";
 
+// Import Vision UI theme
+import colors from "../assets/theme/base/colors";
+import linearGradient from "../assets/theme/functions/linearGradient";
+
 const API_BASE_URL = "https://geo-track-1.onrender.com";
+const { gradients, dark } = colors;
 
 const Dashboard = () => {
   const [currentPage, setCurrentPage] = useState("analytics");
@@ -179,8 +184,7 @@ const Dashboard = () => {
     try {
       if (currentPage === "analytics") {
         await Promise.all([fetchAnalytics(), fetchSyncStatus()]);
-      }else if (currentPage === "mapViewer") {  // ← ADD THIS
-      // Map viewer fetches its own data
+      }else if (currentPage === "mapViewer") {
       setLoading(false);
       return;
       } 
@@ -462,7 +466,7 @@ const Dashboard = () => {
   const navItems = [
   { id: "analytics", label: "Dashboard", icon: Home },
   { id: "mapViewer", label: "Map View", icon: MapPin },
-  { id: "journeyTracking", label: "Journey Reports", icon: TrendingUp }, // ← ADD THIS
+  { id: "journeyTracking", label: "Journey Reports", icon: TrendingUp },
   { id: "clients", label: "Clients", icon: FileText },
   { id: "clientServices", label: "Client Services", icon: Package },
   { id: "users", label: "Team Activity", icon: Users },
@@ -478,19 +482,22 @@ const Dashboard = () => {
   const mainMargin = sidebarCollapsed ? "ml-20" : "ml-72";
 
   return (
-    <div className="min-h-screen" style={{ background: '#ecf0f3' }}>
+    <div className="min-h-screen" style={{ background: dark.body }}>
       {/* Collapsible Sidebar */}
       <aside 
   className={`fixed top-0 left-0 h-full ${sidebarWidth} flex flex-col transition-all duration-300`}
-  style={{ background: '#ecf0f3', zIndex: 40 }}
+  style={{ 
+    background: linearGradient(gradients.sidenav.main, gradients.sidenav.state, gradients.sidenav.deg),
+    zIndex: 40 
+  }}
 >
   {/* Toggle Button */}
   <button
     onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
     className="absolute -right-3 top-8 w-6 h-6 rounded-full flex items-center justify-center transition-all hover:scale-110 z-50"
     style={{
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      boxShadow: '2px 2px 6px rgba(102,126,234,0.4)',
+      background: linearGradient(gradients.info.main, gradients.info.state),
+      boxShadow: '0 4px 12px rgba(0, 117, 255, 0.4)',
     }}
   >
     {sidebarCollapsed ? (
@@ -507,8 +514,8 @@ const Dashboard = () => {
       <div 
         className="mb-8 p-5 rounded-2xl flex items-center gap-3"
         style={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          boxShadow: '4px 4px 8px rgba(102,126,234,0.3), -2px -2px 6px rgba(255,255,255,0.1)',
+          background: linearGradient(gradients.info.main, gradients.info.state),
+          boxShadow: '0 8px 24px rgba(0, 117, 255, 0.3)',
         }}
       >
         <img src="/logo.png" alt="GeoTrack" className="w-10 h-10 object-contain" />
@@ -518,8 +525,8 @@ const Dashboard = () => {
       <div 
         className="mb-8 p-3 rounded-2xl flex items-center justify-center mx-auto"
         style={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          boxShadow: '4px 4px 8px rgba(102,126,234,0.3)',
+          background: linearGradient(gradients.info.main, gradients.info.state),
+          boxShadow: '0 8px 24px rgba(0, 117, 255, 0.3)',
           width: '48px',
         }}
       >
@@ -530,19 +537,19 @@ const Dashboard = () => {
     {/* Company Context */}
     {!sidebarCollapsed && !isSuperAdmin && userCompany.name && (
       <div 
-        className="mb-6 p-3 rounded-xl border border-slate-200"
+        className="mb-6 p-3 rounded-xl border"
         style={{
-          background: '#f8fafc',
-          boxShadow: '2px 2px 4px rgba(148,163,184,0.15)',
+          background: 'rgba(255, 255, 255, 0.05)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
         }}
       >
         <div className="flex items-center gap-2 mb-1">
-          <Building2 className="w-3.5 h-3.5" style={{ color: '#667eea' }} />
-          <span className="text-xs font-medium uppercase tracking-wide" style={{ color: '#94a3b8' }}>
+          <Building2 className="w-3.5 h-3.5" style={{ color: colors.info.main }} />
+          <span className="text-xs font-medium uppercase tracking-wide" style={{ color: colors.text.main }}>
             Company
           </span>
         </div>
-        <p className="text-sm font-semibold truncate" style={{ color: '#1e293b' }}>
+        <p className="text-sm font-semibold truncate text-white">
           {userCompany.name}
         </p>
       </div>
@@ -553,7 +560,7 @@ const Dashboard = () => {
       <div 
         className="mb-6 p-3 rounded-xl border"
         style={{
-          background: 'linear-gradient(135deg, rgba(250,112,154,0.1), rgba(254,225,64,0.1))',
+          background: linearGradient('rgba(250,112,154,0.1)', 'rgba(254,225,64,0.05)'),
           border: '1px solid rgba(250,112,154,0.3)',
         }}
       >
@@ -563,7 +570,7 @@ const Dashboard = () => {
             Super Admin
           </span>
         </div>
-        <p className="text-xs" style={{ color: '#64748b' }}>
+        <p className="text-xs" style={{ color: colors.text.main }}>
           All companies access
         </p>
       </div>
@@ -582,36 +589,34 @@ const Dashboard = () => {
             style={
               isActive
                 ? {
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    boxShadow: '3px 3px 6px rgba(102,126,234,0.4)',
+                    background: linearGradient(gradients.info.main, gradients.info.state),
+                    boxShadow: '0 4px 12px rgba(0, 117, 255, 0.4)',
                     color: 'white',
                   }
                 : {
                     background: 'transparent',
-                    color: '#64748b',
+                    color: colors.text.main,
                   }
             }
             onMouseEnter={(e) => {
               if (!isActive) {
-                e.currentTarget.style.background = '#f8fafc';
-                e.currentTarget.style.boxShadow = '2px 2px 4px rgba(148,163,184,0.1)';
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
               }
             }}
             onMouseLeave={(e) => {
               if (!isActive) {
                 e.currentTarget.style.background = 'transparent';
-                e.currentTarget.style.boxShadow = 'none';
               }
             }}
           >
             <Icon 
               className="w-5 h-5 flex-shrink-0" 
-              style={{ color: isActive ? 'white' : '#94a3b8' }}
+              style={{ color: isActive ? 'white' : colors.text.main }}
             />
             {!sidebarCollapsed && (
               <span 
                 className="font-medium text-sm"
-                style={{ color: isActive ? 'white' : '#64748b' }}
+                style={{ color: isActive ? 'white' : colors.text.main }}
               >
                 {item.label}
               </span>
@@ -620,9 +625,10 @@ const Dashboard = () => {
               <div 
                 className="absolute left-full ml-2 px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50"
                 style={{
-                  background: '#1e293b',
+                  background: linearGradient(gradients.card.main, gradients.card.state, gradients.card.deg),
                   color: 'white',
                   fontSize: '12px',
+                  border: '1px solid rgba(255,255,255,0.1)',
                 }}
               >
                 {item.label}
@@ -641,12 +647,12 @@ const Dashboard = () => {
           className="w-full p-4 rounded-xl transition-all duration-200 group"
           style={{
             background: planPreview?.isFreePlan 
-              ? 'linear-gradient(135deg, rgba(148,163,184,0.1) 0%, rgba(100,116,139,0.1) 100%)'
-              : 'linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%)',
-            border: `1px solid ${planPreview?.isFreePlan ? 'rgba(148,163,184,0.2)' : 'rgba(102,126,234,0.2)'}`,
+              ? 'rgba(160, 174, 192, 0.1)'
+              : linearGradient('rgba(0,117,255,0.1)', 'rgba(33,212,253,0.05)'),
+            border: `1px solid ${planPreview?.isFreePlan ? 'rgba(160,174,192,0.2)' : 'rgba(0,117,255,0.3)'}`,
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.boxShadow = '3px 3px 6px rgba(102,126,234,0.2)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,117,255,0.2)';
             e.currentTarget.style.transform = 'translateY(-2px)';
           }}
           onMouseLeave={(e) => {
@@ -657,31 +663,31 @@ const Dashboard = () => {
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               {planPreview?.isFreePlan ? (
-                <Sparkles className="w-4 h-4" style={{ color: '#94a3b8' }} />
+                <Sparkles className="w-4 h-4" style={{ color: colors.text.main }} />
               ) : (
-                <Crown className="w-4 h-4" style={{ color: '#667eea' }} />
+                <Crown className="w-4 h-4" style={{ color: colors.info.main }} />
               )}
-              <span className="text-sm font-semibold" style={{ color: '#1e293b' }}>
+              <span className="text-sm font-semibold text-white">
                 {planPreview?.name}
               </span>
             </div>
-            <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: '#667eea' }} />
+            <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: colors.info.main }} />
           </div>
           
           {/* Users */}
           <div className="mb-2">
             <div className="flex items-center justify-between mb-1">
-              <span className="text-xs" style={{ color: '#64748b' }}>Users</span>
-              <span className="text-xs font-semibold" style={{ color: '#1e293b' }}>
+              <span className="text-xs" style={{ color: colors.text.main }}>Users</span>
+              <span className="text-xs font-semibold text-white">
                 {planPreview.usersUsed}/{planPreview.usersMax}
               </span>
             </div>
-            <div className="h-1 rounded-full" style={{ background: '#e6eaf0' }}>
+            <div className="h-1 rounded-full" style={{ background: 'rgba(255,255,255,0.1)' }}>
               <div 
                 className="h-full rounded-full transition-all"
                 style={{ 
                   width: `${Math.min((planPreview.usersUsed / planPreview.usersMax) * 100, 100)}%`,
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  background: linearGradient(gradients.info.main, gradients.info.state),
                 }}
               />
             </div>
@@ -690,18 +696,18 @@ const Dashboard = () => {
           {/* Clients */}
           <div className="mb-2">
             <div className="flex items-center justify-between mb-1">
-              <span className="text-xs" style={{ color: '#64748b' }}>Clients</span>
-              <span className="text-xs font-semibold" style={{ color: '#1e293b' }}>
+              <span className="text-xs" style={{ color: colors.text.main }}>Clients</span>
+              <span className="text-xs font-semibold text-white">
                 {planPreview.clientsUnlimited ? 'Unlimited' : `${planPreview.clientsUsed}/${planPreview.clientsMax}`}
               </span>
             </div>
             {!planPreview.clientsUnlimited && (
-              <div className="h-1 rounded-full" style={{ background: '#e6eaf0' }}>
+              <div className="h-1 rounded-full" style={{ background: 'rgba(255,255,255,0.1)' }}>
                 <div 
                   className="h-full rounded-full transition-all"
                   style={{ 
                     width: `${Math.min((planPreview.clientsUsed / planPreview.clientsMax) * 100, 100)}%`,
-                    background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+                    background: linearGradient(gradients.success.main, gradients.success.state),
                   }}
                 />
               </div>
@@ -711,20 +717,20 @@ const Dashboard = () => {
           {/* Storage */}
           <div>
             <div className="flex items-center justify-between mb-1">
-              <span className="text-xs" style={{ color: '#64748b' }}>Storage</span>
-              <span className="text-xs font-semibold" style={{ color: '#1e293b' }}>
+              <span className="text-xs" style={{ color: colors.text.main }}>Storage</span>
+              <span className="text-xs font-semibold text-white">
                 {planPreview.storageMax === null ? 'Unlimited' : 
                   `${(planPreview.storageUsed / 1024).toFixed(1)}/${(planPreview.storageMax / 1024).toFixed(0)} GB`
                 }
               </span>
             </div>
             {planPreview.storageMax !== null && (
-              <div className="h-1 rounded-full" style={{ background: '#e6eaf0' }}>
+              <div className="h-1 rounded-full" style={{ background: 'rgba(255,255,255,0.1)' }}>
                 <div 
                   className="h-full rounded-full transition-all"
                   style={{ 
                     width: `${Math.min((planPreview.storageUsed / planPreview.storageMax) * 100, 100)}%`,
-                    background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                    background: linearGradient(gradients.info.main, gradients.info.state),
                   }}
                 />
               </div>
@@ -741,16 +747,17 @@ const Dashboard = () => {
           onClick={() => setCurrentPage("billingPlans")}
           className="w-full p-3 rounded-xl flex items-center justify-center transition-all hover:scale-105 relative group"
           style={{
-            background: 'linear-gradient(135deg, rgba(102,126,234,0.15) 0%, rgba(118,75,162,0.15) 100%)',
+            background: 'rgba(0,117,255,0.15)',
           }}
         >
-          <Crown className="w-5 h-5" style={{ color: '#667eea' }} />
+          <Crown className="w-5 h-5" style={{ color: colors.info.main }} />
           <div
             className="absolute left-full ml-2 px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50"
             style={{
-              background: '#1e293b',
+              background: linearGradient(gradients.card.main, gradients.card.state, gradients.card.deg),
               color: 'white',
               fontSize: '12px',
+              border: '1px solid rgba(255,255,255,0.1)',
             }}
           >
             Billing & Plans
@@ -765,7 +772,7 @@ const Dashboard = () => {
       <main className={`${mainMargin} p-8 transition-all duration-300`}>
         {/* Top Bar */}
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-bold text-slate-800 capitalize">
+          <h1 className="text-2xl font-bold text-white capitalize">
             {currentPage.replace(/([A-Z])/g, " $1")}
           </h1>
 
@@ -776,8 +783,8 @@ const Dashboard = () => {
                 onClick={fetchData}
                 className="w-12 h-12 rounded-xl flex items-center justify-center transition-all hover:scale-105"
                 style={{
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  boxShadow: '4px 4px 8px rgba(102,126,234,0.4)',
+                  background: linearGradient(gradients.info.main, gradients.info.state),
+                  boxShadow: '0 4px 12px rgba(0,117,255,0.4)',
                 }}
               >
                 <RefreshCw className="w-5 h-5 text-white" />
@@ -790,44 +797,44 @@ const Dashboard = () => {
                 onClick={() => setProfileOpen(p => !p)}
                 className="w-12 h-12 rounded-full flex items-center justify-center transition-all hover:scale-105"
                 style={{
-                  background: '#f8fafc',
-                  boxShadow: '3px 3px 6px rgba(148,163,184,0.2)',
+                  background: 'rgba(255,255,255,0.1)',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
                 }}
               >
-                <Users className="w-5 h-5 text-slate-600" />
+                <Users className="w-5 h-5 text-white" />
               </button>
 
               {profileOpen && (
                 <div
                   className="absolute right-0 mt-4 w-64 rounded-2xl p-4 z-50"
                   style={{
-                    background: '#ecf0f3',
-                    boxShadow:
-                      '6px 6px 12px rgba(163,177,198,0.4), -6px -6px 12px rgba(255,255,255,0.8)',
+                    background: linearGradient(gradients.card.main, gradients.card.state, gradients.card.deg),
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
                   }}
                 >
-                  <p className="text-sm font-semibold text-slate-800">
+                  <p className="text-sm font-semibold text-white">
                     {isSuperAdmin ? "Super Admin Account" : "Admin Account"}
                   </p>
-                  <p className="text-xs truncate text-slate-500">
+                  <p className="text-xs truncate" style={{ color: colors.text.main }}>
                     {localStorage.getItem("userEmail") || ""}
                   </p>
 
-                  <div className="my-3 border-t border-slate-200" />
+                  <div className="my-3 border-t" style={{ borderColor: 'rgba(255,255,255,0.1)' }} />
 
                   <button
                     onClick={() => {
                       localStorage.clear();
                       window.location.href = "/login";
                     }}
-                    className="w-full flex items-center gap-3 p-3 rounded-xl"
+                    className="w-full flex items-center gap-3 p-3 rounded-xl transition-all hover:scale-105"
                     style={{
-                      background: '#fee2e2',
-                      boxShadow: '2px 2px 4px rgba(239,68,68,0.2)',
+                      background: linearGradient(gradients.error.main, gradients.error.state),
+                      boxShadow: '0 4px 12px rgba(227,26,26,0.3)',
                     }}
                   >
-                    <LogOut className="w-4 h-4 text-red-600" />
-                    <span className="text-sm font-semibold text-red-600">
+                    <LogOut className="w-4 h-4 text-white" />
+                    <span className="text-sm font-semibold text-white">
                       Logout
                     </span>
                   </button>
@@ -839,15 +846,18 @@ const Dashboard = () => {
 
         {/* Error */}
         {error && (
-          <div className="mb-6 p-5 rounded-2xl bg-red-100 border-l-4 border-red-400">
-            <p className="font-medium text-red-700">{error}</p>
+          <div className="mb-6 p-5 rounded-2xl border-l-4" style={{
+            background: 'rgba(227,26,26,0.1)',
+            borderColor: colors.error.main,
+          }}>
+            <p className="font-medium" style={{ color: colors.error.main }}>{error}</p>
           </div>
         )}
 
         {/* Page Routing */}
         {loading ? (
           <div className="flex items-center justify-center h-96">
-            <TrendingUp className="w-10 h-10 text-indigo-500 animate-pulse" />
+            <TrendingUp className="w-10 h-10 animate-pulse" style={{ color: colors.info.main }} />
           </div>
         ) : currentPage === "analytics" ? (
           <AnalyticsPage
@@ -892,7 +902,7 @@ const Dashboard = () => {
             onViewMeetings={handleViewUserMeetings}
             onViewExpenses={handleViewUserExpenses}
           />
-          ) : currentPage === "bankSettings" ? (  // ← ADD THIS
+          ) : currentPage === "bankSettings" ? (
           <BankAccountSettings />
         ) : currentPage === "userManagement" ? (
           <UserManagementPage
@@ -928,7 +938,7 @@ const Dashboard = () => {
     selectedUser={selectedUser}
     expenses={expenses}
     pagination={expensesPagination}
-    refreshTrigger={refreshPaymentTrigger}  // ← ADD THIS LINE
+    refreshTrigger={refreshPaymentTrigger}
     onBack={() => setCurrentPage("users")}
     onRefresh={() =>
       fetchUserExpensesDetail(
