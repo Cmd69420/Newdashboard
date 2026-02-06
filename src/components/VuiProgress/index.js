@@ -22,10 +22,10 @@ import { forwardRef } from "react";
 import PropTypes from "prop-types";
 
 // Vision UI Dashboard React components
-import VuiTypography from "components/VuiTypography";
+import VuiTypography from "./VuiProgressRoot";
 
 // Custom styles for VuiProgress
-import VuiProgressRoot from "components/VuiProgress/VuiProgressRoot";
+import VuiProgressRoot from "./VuiProgressRoot";
 
 const VuiProgress = forwardRef(({ variant, color, value, label, ...rest }, ref) => (
   <>

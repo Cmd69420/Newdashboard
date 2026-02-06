@@ -3,131 +3,272 @@ import {
   LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from "recharts";
-import {
-  TrendingUp, TrendingDown, Users, Activity, MapPin, Target, Clock,
-  AlertCircle, Award, AlertTriangle, CheckCircle, Sparkles
-} from "lucide-react";
 
-// Vision UI Dashboard React components - UPDATED PATHS
+// @mui material components
+import { Card, Grid, Icon, Stack } from "@mui/material";
+import {
+  TrendingUp as TrendingUpIcon,
+  TrendingDown as TrendingDownIcon,
+  People as PeopleIcon,
+  Speed as SpeedIcon,
+  Room as RoomIcon,
+  TrackChanges as TrackChangesIcon,
+  AccessTime as AccessTimeIcon,
+  Error as ErrorIcon,
+  EmojiEvents as EmojiEventsIcon,
+  Warning as WarningIcon,
+  CheckCircle as CheckCircleIcon,
+  Autorenew as AutorenewIcon,
+} from "@mui/icons-material";
+
+// Vision UI Dashboard React components
 import VuiBox from "../components/VuiBox";
 import VuiTypography from "../components/VuiTypography";
-import VuiBadge from "../components/VuiBadge";
-import GradientBorder from "../examples/GradientBorder";
-import { Card, Grid, Icon } from "@mui/material";
-import linearGradient from "../assets/theme/functions/linearGradient";
+
+// Vision UI Dashboard React base styles
 import colors from "../assets/theme/base/colors";
+import linearGradient from "../assets/theme/functions/linearGradient";
+import rgba from "../assets/theme/functions/rgba";
 
-const { gradients } = colors;
+const { gradients, info, success, error, warning, grey } = colors;
 
-// Main Stat Card Component
-const StatCard = ({ title, value, change, isPositive, icon: Icon, gradient, onClick }) => (
-  <Card 
-    onClick={onClick}
-    sx={{ 
-      height: "100%", 
-      cursor: onClick ? "pointer" : "default",
-      transition: "transform 0.2s",
-      "&:hover": onClick ? { transform: "scale(1.02)" } : {}
-    }}
-  >
-    <VuiBox display="flex" flexDirection="column" height="100%">
-      <VuiBox display="flex" justifyContent="space-between" alignItems="center" mb="18px">
-        <VuiBox>
-          <VuiTypography 
-            variant="caption" 
-            color="text" 
-            fontWeight="medium"
-            textTransform="uppercase"
-            letterSpacing="1px"
+// Stat Card Component with Vision UI styling
+const MiniStatisticsCard = ({ 
+  title, 
+  count, 
+  percentage, 
+  icon, 
+  onClick 
+}) => {
+  return (
+    <Card 
+      sx={{ 
+        padding: "22px",
+        cursor: onClick ? "pointer" : "default",
+        transition: "all 0.2s",
+        "&:hover": onClick ? { 
+          transform: "translateY(-4px)",
+          boxShadow: "0 20px 27px 0 rgba(0, 0, 0, 0.05)"
+        } : {}
+      }}
+      onClick={onClick}
+    >
+      <VuiBox>
+        <VuiBox display="flex" alignItems="center" mb="26px">
+          <VuiBox
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            sx={{
+              background: linearGradient(
+                gradients.info.main,
+                gradients.info.state
+              ),
+              borderRadius: "12px",
+              width: "48px",
+              height: "48px",
+              mr: "18px",
+              boxShadow: "0px 3.5px 5.5px rgba(0, 0, 0, 0.02)",
+            }}
           >
-            {title}
-          </VuiTypography>
-          <VuiTypography variant="h2" color="white" fontWeight="bold" mt="4px">
-            {typeof value === "number" ? value.toLocaleString() : value}
-          </VuiTypography>
+            <Icon 
+              sx={{ 
+                color: "white !important", 
+                fontSize: "24px !important",
+              }}
+            >
+              {icon}
+            </Icon>
+          </VuiBox>
+          
+          <VuiBox>
+            <VuiTypography 
+              variant="caption" 
+              color="text" 
+              fontWeight="medium"
+              textTransform="uppercase"
+              sx={{ 
+                fontSize: "10px",
+                letterSpacing: "1px"
+              }}
+            >
+              {title}
+            </VuiTypography>
+            <VuiTypography 
+              variant="h3" 
+              color="white" 
+              fontWeight="bold"
+            >
+              {count}
+            </VuiTypography>
+          </VuiBox>
         </VuiBox>
-        
-        <VuiBox
-          sx={{
-            background: linearGradient(gradient.main, gradient.state),
-            width: "60px",
-            height: "60px",
-            borderRadius: "12px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            boxShadow: `0 8px 24px ${gradient.main}40`,
-          }}
-        >
-          <Icon size={28} color="white" />
-        </VuiBox>
+
+        {percentage && (
+          <VuiBox display="flex" alignItems="center">
+            <VuiTypography 
+              variant="button" 
+              color={percentage.color} 
+              fontWeight="bold"
+              mr="4px"
+            >
+              {percentage.amount}
+            </VuiTypography>
+            <VuiTypography 
+              variant="button" 
+              color="text" 
+              fontWeight="regular"
+            >
+              {percentage.label}
+            </VuiTypography>
+          </VuiBox>
+        )}
       </VuiBox>
+    </Card>
+  );
+};
 
-      {change !== undefined && (
-        <VuiBox display="flex" alignItems="center" gap="4px">
-          {isPositive ? (
-            <Icon component={TrendingUp} sx={{ color: "#01B574", fontSize: "16px" }} />
-          ) : (
-            <Icon component={TrendingDown} sx={{ color: "#E31A1A", fontSize: "16px" }} />
-          )}
-          <VuiTypography variant="button" fontWeight="bold" color={isPositive ? "success" : "error"}>
-            {Math.abs(change)}% {isPositive ? 'increase' : 'decrease'}
-          </VuiTypography>
-        </VuiBox>
-      )}
-    </VuiBox>
-  </Card>
-);
-
-// Compact Insight Card
-const InsightCard = ({ icon: Icon, gradient, title, value, subtitle, onClick }) => (
+// Info Card Component
+const InfoCard = ({ icon, title, value, subtitle, color, onClick }) => (
   <Card 
-    onClick={onClick}
     sx={{ 
       height: "100%",
+      padding: "18px",
       cursor: onClick ? "pointer" : "default",
       transition: "all 0.2s",
-      "&:hover": onClick ? { transform: "scale(1.03)" } : {}
+      "&:hover": onClick ? { 
+        transform: "translateY(-2px)",
+        boxShadow: "0 14px 26px rgba(0, 0, 0, 0.04)"
+      } : {}
     }}
+    onClick={onClick}
   >
-    <VuiBox display="flex" alignItems="center" gap="12px">
+    <VuiBox display="flex" alignItems="center">
       <VuiBox
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
         sx={{
-          background: linearGradient(gradient.main, gradient.state),
-          width: "48px",
-          height: "48px",
+          background: linearGradient(
+            gradients[color].main,
+            gradients[color].state
+          ),
           borderRadius: "10px",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
+          width: "42px",
+          height: "42px",
+          mr: "12px",
           flexShrink: 0,
-          boxShadow: `0 4px 12px ${gradient.main}30`,
         }}
       >
-        <Icon size={22} color="white" />
+        <Icon 
+          sx={{ 
+            color: "white !important", 
+            fontSize: "18px !important",
+          }}
+        >
+          {icon}
+        </Icon>
       </VuiBox>
       
       <VuiBox flex="1" minWidth="0">
         <VuiTypography 
-          variant="xxs" 
+          variant="caption" 
           color="text" 
-          fontWeight="bold"
+          fontWeight="medium"
           textTransform="uppercase"
-          sx={{ opacity: 0.7 }}
+          sx={{ 
+            fontSize: "9px",
+            letterSpacing: "0.5px"
+          }}
         >
           {title}
         </VuiTypography>
-        <VuiTypography variant="h4" color="white" fontWeight="bold">
+        <VuiTypography 
+          variant="h4" 
+          color="white" 
+          fontWeight="bold"
+          sx={{ lineHeight: 1.2 }}
+        >
           {value}
         </VuiTypography>
         {subtitle && (
-          <VuiTypography variant="caption" color="text" sx={{ opacity: 0.6 }}>
+          <VuiTypography 
+            variant="caption" 
+            color="text"
+            sx={{ fontSize: "10px" }}
+          >
             {subtitle}
           </VuiTypography>
         )}
       </VuiBox>
     </VuiBox>
   </Card>
+);
+
+// Action Item Card
+const ActionItemCard = ({ icon, title, description, color, onClick }) => (
+  <VuiBox
+    onClick={onClick}
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      padding: "14px 18px",
+      borderRadius: "12px",
+      background: rgba(grey[600], 0.2),
+      border: `1px solid ${rgba(grey[600], 0.4)}`,
+      cursor: "pointer",
+      transition: "all 0.2s",
+      "&:hover": {
+        background: rgba(grey[600], 0.3),
+        transform: "translateX(4px)",
+        borderColor: rgba(gradients[color].main, 0.6),
+      }
+    }}
+  >
+    <VuiBox
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      sx={{
+        background: linearGradient(
+          gradients[color].main,
+          gradients[color].state
+        ),
+        borderRadius: "10px",
+        width: "38px",
+        height: "38px",
+        mr: "14px",
+        flexShrink: 0,
+      }}
+    >
+      <Icon 
+        sx={{ 
+          color: "white !important", 
+          fontSize: "18px !important",
+        }}
+      >
+        {icon}
+      </Icon>
+    </VuiBox>
+    
+    <VuiBox flex="1">
+      <VuiTypography 
+        variant="button" 
+        color="white" 
+        fontWeight="bold"
+        sx={{ display: "block", mb: "2px" }}
+      >
+        {title}
+      </VuiTypography>
+      <VuiTypography 
+        variant="caption" 
+        color="text"
+        sx={{ fontSize: "11px" }}
+      >
+        {description}
+      </VuiTypography>
+    </VuiBox>
+  </VuiBox>
 );
 
 const AnalyticsPage = ({
@@ -170,160 +311,141 @@ const AnalyticsPage = ({
 
   const inactiveCount = stats.totalClients - stats.activeClients;
   const missingGPS = stats.totalClients - stats.withCoordinates;
-  
-  const actionItems = [
-    {
-      icon: AlertTriangle,
-      color: '#E31A1A',
-      gradient: gradients.error,
-      title: `${inactiveCount} clients inactive >30 days`,
-      action: 'Review engagement strategy',
-      show: inactiveCount > 0
-    },
-    {
-      icon: MapPin,
-      color: '#FFB547',
-      gradient: gradients.warning,
-      title: `${missingGPS} clients missing GPS`,
-      action: 'Schedule geocoding batch',
-      show: missingGPS > 0
-    },
-    {
-      icon: CheckCircle,
-      color: '#01B574',
-      gradient: gradients.success,
-      title: `${stats.coordinatesCoverage}% GPS coverage`,
-      action: stats.coordinatesCoverage > 80 ? 'Excellent coverage!' : 'Needs improvement',
-      show: true
-    }
-  ].filter(item => item.show);
 
   return (
     <VuiBox py={3}>
       {/* Header */}
-      <VuiBox mb={3} display="flex" justifyContent="space-between" alignItems="center">
-        <VuiBox>
-          <VuiTypography variant="h2" color="white" fontWeight="bold" mb="4px">
-            Analytics
-          </VuiTypography>
-          <VuiTypography variant="button" color="text">
-            GeoTrack Performance Dashboard
-          </VuiTypography>
-        </VuiBox>
-        
-        <VuiBox display="flex" alignItems="center" gap="8px">
-          <Sparkles size={18} color="#0BC5EA" />
-          <VuiTypography variant="button" color="text">
-            Live Data
-          </VuiTypography>
-        </VuiBox>
+      <VuiBox mb={3}>
+        <VuiTypography variant="h2" color="white" fontWeight="bold" mb="4px">
+          Analytics
+        </VuiTypography>
+        <VuiTypography variant="button" color="text" fontWeight="regular">
+          GeoTrack Performance Dashboard
+        </VuiTypography>
       </VuiBox>
 
-      {/* Key Metrics */}
+      {/* Main Statistics */}
       <VuiBox mb={3}>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={6} lg={4}>
-            <StatCard
+          <Grid item xs={12} sm={6} lg={3}>
+            <MiniStatisticsCard
               title="Total Clients"
-              value={stats.totalClients}
-              change={parseFloat(growth)}
-              isPositive={growth > 0}
-              icon={Users}
-              gradient={gradients.info}
+              count={stats.totalClients.toLocaleString()}
+              percentage={{
+                color: growth >= 0 ? "success" : "error",
+                amount: `${Math.abs(growth)}%`,
+                label: growth >= 0 ? "increase" : "decrease",
+              }}
+              icon={<PeopleIcon />}
               onClick={onGoToClients}
             />
           </Grid>
           
-          <Grid item xs={12} md={6} lg={4}>
-            <StatCard
+          <Grid item xs={12} sm={6} lg={3}>
+            <MiniStatisticsCard
               title="Active Rate"
-              value={`${conversionRate}%`}
-              change={2.3}
-              isPositive={true}
-              icon={Activity}
-              gradient={gradients.success}
+              count={`${conversionRate}%`}
+              percentage={{
+                color: "success",
+                amount: "+2.3%",
+                label: "vs last month",
+              }}
+              icon={<SpeedIcon />}
               onClick={onGoToClients}
             />
           </Grid>
           
-          <Grid item xs={12} md={6} lg={4}>
-            <StatCard
+          <Grid item xs={12} sm={6} lg={3}>
+            <MiniStatisticsCard
               title="GPS Coverage"
-              value={`${stats.coordinatesCoverage}%`}
-              change={5.1}
-              isPositive={true}
-              icon={MapPin}
-              gradient={gradients.info}
-              onClick={onGoToClients}
+              count={`${stats.coordinatesCoverage}%`}
+              percentage={{
+                color: "success",
+                amount: "+5.1%",
+                label: "improved",
+              }}
+              icon={<RoomIcon />}
+            />
+          </Grid>
+          
+          <Grid item xs={12} sm={6} lg={3}>
+            <MiniStatisticsCard
+              title="Total Logs"
+              count={`${(stats.totalLogs / 1000).toFixed(1)}K`}
+              percentage={{
+                color: "info",
+                amount: "5.1K",
+                label: "tracking records",
+              }}
+              icon={<AccessTimeIcon />}
             />
           </Grid>
         </Grid>
       </VuiBox>
 
-      {/* Insight Cards */}
+      {/* Quick Stats */}
       <VuiBox mb={3}>
-        <Grid container spacing={2}>
-          <Grid item xs={6} md={4} lg={2}>
-            <InsightCard
-              icon={Users}
-              gradient={gradients.info}
+        <Grid container spacing={3}>
+          <Grid item xs={6} md={3} lg={2}>
+            <InfoCard
+              icon={<PeopleIcon />}
               title="Team Size"
               value={stats.totalUsers}
               subtitle="Active users"
+              color="info"
               onClick={onGoToUsers}
             />
           </Grid>
           
-          <Grid item xs={6} md={4} lg={2}>
-            <InsightCard
-              icon={MapPin}
-              gradient={gradients.success}
+          <Grid item xs={6} md={3} lg={2}>
+            <InfoCard
+              icon={<RoomIcon />}
               title="Service Areas"
               value={stats.uniquePincodes}
               subtitle="Unique pincodes"
-              onClick={onGoToClients}
+              color="success"
             />
           </Grid>
           
-          <Grid item xs={6} md={4} lg={2}>
-            <InsightCard
-              icon={Target}
-              gradient={gradients.info}
+          <Grid item xs={6} md={3} lg={2}>
+            <InfoCard
+              icon={<TrackChangesIcon />}
               title="Density"
               value={clientsPerArea}
-              subtitle="Clients per area"
+              subtitle="Clients/area"
+              color="info"
             />
           </Grid>
           
-          <Grid item xs={6} md={4} lg={2}>
-            <InsightCard
-              icon={Activity}
-              gradient={gradients.error}
+          <Grid item xs={6} md={3} lg={2}>
+            <InfoCard
+              icon={<ErrorIcon />}
               title="Inactive"
               value={inactiveCount}
               subtitle="Need attention"
+              color="error"
               onClick={onGoToClients}
             />
           </Grid>
           
-          <Grid item xs={6} md={4} lg={2}>
-            <InsightCard
-              icon={AlertCircle}
-              gradient={gradients.warning}
+          <Grid item xs={6} md={3} lg={2}>
+            <InfoCard
+              icon={<WarningIcon />}
               title="Missing GPS"
               value={missingGPS}
               subtitle="Need geocoding"
+              color="warning"
               onClick={onGoToClients}
             />
           </Grid>
           
-          <Grid item xs={6} md={4} lg={2}>
-            <InsightCard
-              icon={Clock}
-              gradient={gradients.info}
-              title="Total Logs"
-              value={`${(stats.totalLogs / 1000).toFixed(1)}K`}
-              subtitle="Tracking records"
+          <Grid item xs={6} md={3} lg={2}>
+            <InfoCard
+              icon={<CheckCircleIcon />}
+              title="Coverage"
+              value={`${stats.coordinatesCoverage}%`}
+              subtitle="GPS data"
+              color="success"
             />
           </Grid>
         </Grid>
@@ -331,110 +453,109 @@ const AnalyticsPage = ({
 
       {/* Action Items */}
       <VuiBox mb={3}>
-        <Card>
-          <VuiBox mb="20px" display="flex" alignItems="center" gap="12px">
+        <Card sx={{ padding: "22px" }}>
+          <VuiBox display="flex" alignItems="center" mb="20px">
             <VuiBox
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
               sx={{
-                background: linearGradient(gradients.info.main, gradients.info.state),
-                width: "42px",
-                height: "42px",
+                background: linearGradient(
+                  gradients.info.main,
+                  gradients.info.state
+                ),
                 borderRadius: "10px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
+                width: "40px",
+                height: "40px",
+                mr: "12px",
               }}
             >
-              <Target size={20} color="white" />
+              <Icon 
+                sx={{ 
+                  color: "white !important", 
+                  fontSize: "20px !important",
+                }}
+              >
+                <TrackChangesIcon />
+              </Icon>
             </VuiBox>
+            
             <VuiTypography variant="lg" color="white" fontWeight="bold">
               Action Items
             </VuiTypography>
           </VuiBox>
 
-          <VuiBox display="flex" flexDirection="column" gap="12px">
-            {actionItems.map((item, idx) => (
-              <VuiBox
-                key={idx}
+          <Stack spacing={2}>
+            {inactiveCount > 0 && (
+              <ActionItemCard
+                icon={<WarningIcon />}
+                title={`${inactiveCount} clients inactive >30 days`}
+                description="Review engagement strategy"
+                color="error"
                 onClick={onGoToClients}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "16px",
-                  padding: "16px",
-                  borderRadius: "12px",
-                  background: `${item.color}10`,
-                  border: `1px solid ${item.color}30`,
-                  cursor: "pointer",
-                  transition: "all 0.2s",
-                  "&:hover": {
-                    transform: "scale(1.01)",
-                    background: `${item.color}20`,
-                  }
-                }}
-              >
-                <VuiBox
-                  sx={{
-                    background: linearGradient(item.gradient.main, item.gradient.state),
-                    width: "44px",
-                    height: "44px",
-                    borderRadius: "10px",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    flexShrink: 0,
-                  }}
-                >
-                  <item.icon size={20} color="white" />
-                </VuiBox>
-                
-                <VuiBox flex="1">
-                  <VuiTypography variant="button" color="white" fontWeight="bold">
-                    {item.title}
-                  </VuiTypography>
-                  <VuiTypography variant="caption" color="text">
-                    {item.action}
-                  </VuiTypography>
-                </VuiBox>
-              </VuiBox>
-            ))}
-          </VuiBox>
+              />
+            )}
+            
+            {missingGPS > 0 && (
+              <ActionItemCard
+                icon={<RoomIcon />}
+                title={`${missingGPS} clients missing GPS`}
+                description="Schedule geocoding batch"
+                color="warning"
+                onClick={onGoToClients}
+              />
+            )}
+            
+            <ActionItemCard
+              icon={<CheckCircleIcon />}
+              title={`${stats.coordinatesCoverage}% GPS coverage`}
+              description={stats.coordinatesCoverage > 80 ? "Excellent coverage!" : "Needs improvement"}
+              color="success"
+            />
+          </Stack>
         </Card>
       </VuiBox>
 
       {/* Charts */}
       <VuiBox mb={3}>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={6} lg={4}>
-            <Card>
-              <VuiTypography variant="lg" color="white" fontWeight="bold" mb="20px">
-                Client Status
-              </VuiTypography>
-              <VuiBox height="240px">
+          {/* Client Status Chart */}
+          <Grid item xs={12} lg={4}>
+            <Card sx={{ padding: "22px" }}>
+              <VuiBox mb="20px">
+                <VuiTypography variant="lg" color="white" fontWeight="bold">
+                  Client Status
+                </VuiTypography>
+              </VuiBox>
+              
+              <VuiBox height="280px">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
                       data={clientStatusData}
                       dataKey="value"
-                      innerRadius={60}
-                      outerRadius={90}
-                      paddingAngle={4}
+                      innerRadius={70}
+                      outerRadius={100}
+                      paddingAngle={5}
                       strokeWidth={0}
                     >
                       {clientStatusData.map((entry, index) => (
-                        <Cell key={index} fill={entry.color} />
+                        <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
                     <Tooltip 
                       contentStyle={{
                         background: 'rgba(10, 14, 35, 0.95)',
                         border: '1px solid rgba(255,255,255,0.1)',
-                        borderRadius: '8px',
+                        borderRadius: '12px',
                         color: '#fff'
                       }}
                     />
                     <Legend 
-                      wrapperStyle={{ color: '#fff' }}
-                      formatter={(value) => <span style={{ color: '#A0AEC0' }}>{value}</span>}
+                      wrapperStyle={{ paddingTop: '20px' }}
+                      formatter={(value) => (
+                        <span style={{ color: '#A0AEC0', fontSize: '14px' }}>{value}</span>
+                      )}
                     />
                   </PieChart>
                 </ResponsiveContainer>
@@ -442,37 +563,43 @@ const AnalyticsPage = ({
             </Card>
           </Grid>
 
-          <Grid item xs={12} md={6} lg={4}>
-            <Card>
-              <VuiTypography variant="lg" color="white" fontWeight="bold" mb="20px">
-                GPS Coverage
-              </VuiTypography>
-              <VuiBox height="240px">
+          {/* GPS Coverage Chart */}
+          <Grid item xs={12} lg={4}>
+            <Card sx={{ padding: "22px" }}>
+              <VuiBox mb="20px">
+                <VuiTypography variant="lg" color="white" fontWeight="bold">
+                  GPS Coverage
+                </VuiTypography>
+              </VuiBox>
+              
+              <VuiBox height="280px">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
                       data={gpsStatusData}
                       dataKey="value"
-                      innerRadius={60}
-                      outerRadius={90}
-                      paddingAngle={4}
+                      innerRadius={70}
+                      outerRadius={100}
+                      paddingAngle={5}
                       strokeWidth={0}
                     >
                       {gpsStatusData.map((entry, index) => (
-                        <Cell key={index} fill={entry.color} />
+                        <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
                     <Tooltip 
                       contentStyle={{
                         background: 'rgba(10, 14, 35, 0.95)',
                         border: '1px solid rgba(255,255,255,0.1)',
-                        borderRadius: '8px',
+                        borderRadius: '12px',
                         color: '#fff'
                       }}
                     />
                     <Legend 
-                      wrapperStyle={{ color: '#fff' }}
-                      formatter={(value) => <span style={{ color: '#A0AEC0' }}>{value}</span>}
+                      wrapperStyle={{ paddingTop: '20px' }}
+                      formatter={(value) => (
+                        <span style={{ color: '#A0AEC0', fontSize: '14px' }}>{value}</span>
+                      )}
                     />
                   </PieChart>
                 </ResponsiveContainer>
@@ -480,34 +607,38 @@ const AnalyticsPage = ({
             </Card>
           </Grid>
 
-          <Grid item xs={12} md={12} lg={4}>
-            <Card>
-              <VuiTypography variant="lg" color="white" fontWeight="bold" mb="20px">
-                Top Areas
-              </VuiTypography>
-              <VuiBox height="240px">
+          {/* Top Areas Chart */}
+          <Grid item xs={12} lg={4}>
+            <Card sx={{ padding: "22px" }}>
+              <VuiBox mb="20px">
+                <VuiTypography variant="lg" color="white" fontWeight="bold">
+                  Top Areas
+                </VuiTypography>
+              </VuiBox>
+              
+              <VuiBox height="280px">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={topAreasData} layout="vertical">
                     <XAxis type="number" stroke="#4A5568" />
                     <YAxis 
                       type="category" 
                       dataKey="area" 
-                      width={80} 
+                      width={100} 
                       stroke="#4A5568"
-                      tick={{ fill: '#A0AEC0', fontSize: 12 }}
+                      tick={{ fill: '#A0AEC0', fontSize: 11 }}
                     />
                     <Tooltip 
                       contentStyle={{
                         background: 'rgba(10, 14, 35, 0.95)',
                         border: '1px solid rgba(255,255,255,0.1)',
-                        borderRadius: '8px',
+                        borderRadius: '12px',
                         color: '#fff'
                       }}
                     />
                     <Bar 
                       dataKey="clients" 
                       fill="url(#barGradient)" 
-                      radius={[0, 12, 12, 0]}
+                      radius={[0, 15, 15, 0]}
                     />
                     <defs>
                       <linearGradient id="barGradient" x1="0" y1="0" x2="1" y2="0">
@@ -525,101 +656,141 @@ const AnalyticsPage = ({
 
       {/* Leaderboard */}
       <VuiBox>
-        <Card>
-          <VuiBox mb="24px" display="flex" alignItems="center" gap="16px">
+        <Card sx={{ padding: "22px" }}>
+          <VuiBox display="flex" alignItems="center" mb="32px">
             <VuiBox
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
               sx={{
-                background: linearGradient(gradients.warning.main, gradients.warning.state),
-                width: "54px",
-                height: "54px",
-                borderRadius: "14px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                boxShadow: "0 8px 24px rgba(251, 185, 71, 0.3)",
+                background: linearGradient(
+                  gradients.warning.main,
+                  gradients.warning.state
+                ),
+                borderRadius: "12px",
+                width: "48px",
+                height: "48px",
+                mr: "14px",
               }}
             >
-              <Award size={26} color="white" />
+              <Icon 
+                sx={{ 
+                  color: "white !important", 
+                  fontSize: "24px !important",
+                }}
+              >
+                <EmojiEventsIcon />
+              </Icon>
             </VuiBox>
+            
             <VuiBox>
               <VuiTypography variant="h4" color="white" fontWeight="bold">
                 Top Performers
               </VuiTypography>
-              <VuiTypography variant="button" color="text">
+              <VuiTypography variant="button" color="text" fontWeight="regular">
                 Best team members this month
               </VuiTypography>
             </VuiBox>
           </VuiBox>
 
-          <Grid container spacing={2}>
-            {userLeaderboard.slice(0, 5).map((user, idx) => (
-              <Grid item xs={6} sm={4} md={2.4} key={idx}>
-                <VuiBox
-                  onClick={() => {
-                    onSelectUser(user);
-                    onGoToUsers();
-                  }}
-                  sx={{
-                    padding: "20px",
-                    borderRadius: "14px",
-                    textAlign: "center",
-                    cursor: "pointer",
-                    transition: "all 0.3s",
-                    background: idx === 0 
-                      ? linearGradient("rgba(251, 185, 71, 0.1)", "rgba(251, 185, 71, 0.05)")
-                      : "rgba(255, 255, 255, 0.02)",
-                    border: idx === 0 
-                      ? "2px solid rgba(251, 185, 71, 0.3)"
-                      : "1px solid rgba(255, 255, 255, 0.05)",
-                    boxShadow: idx === 0 ? "0 8px 24px rgba(251, 185, 71, 0.2)" : "none",
-                    "&:hover": {
-                      transform: "scale(1.05)",
-                      background: idx === 0
-                        ? linearGradient("rgba(251, 185, 71, 0.15)", "rgba(251, 185, 71, 0.08)")
-                        : "rgba(255, 255, 255, 0.05)",
-                    }
-                  }}
-                >
+          <Grid container spacing={3}>
+            {userLeaderboard.slice(0, 5).map((user, idx) => {
+              const isTop = idx === 0;
+              const gradientColor = idx === 0 
+                ? gradients.warning 
+                : idx === 1 
+                ? gradients.dark 
+                : gradients.info;
+
+              return (
+                <Grid item xs={6} sm={4} md={2.4} key={idx}>
                   <VuiBox
+                    onClick={() => {
+                      onSelectUser(user);
+                      onGoToUsers();
+                    }}
                     sx={{
-                      width: "56px",
-                      height: "56px",
-                      borderRadius: "50%",
-                      margin: "0 auto 16px",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      background: idx === 0
-                        ? linearGradient("#FBB947", "#F6AD55")
-                        : idx === 1
-                        ? linearGradient("#CBD5E0", "#A0AEC0")
-                        : idx === 2
-                        ? linearGradient("#F6AD55", "#DD6B20")
-                        : "rgba(255, 255, 255, 0.1)",
-                      boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+                      padding: "24px 16px",
+                      borderRadius: "15px",
+                      textAlign: "center",
+                      cursor: "pointer",
+                      transition: "all 0.3s",
+                      background: isTop 
+                        ? rgba(gradientColor.main, 0.1)
+                        : rgba(grey[600], 0.2),
+                      border: `1px solid ${isTop 
+                        ? rgba(gradientColor.main, 0.3)
+                        : rgba(grey[600], 0.3)}`,
+                      boxShadow: isTop ? `0 8px 24px ${rgba(gradientColor.main, 0.2)}` : "none",
+                      "&:hover": {
+                        transform: "translateY(-8px)",
+                        background: isTop
+                          ? rgba(gradientColor.main, 0.15)
+                          : rgba(grey[600], 0.3),
+                      }
                     }}
                   >
-                    <VuiTypography variant="h4" color="white" fontWeight="bold">
-                      {idx + 1}
+                    <VuiBox
+                      display="flex"
+                      justifyContent="center"
+                      alignItems="center"
+                      sx={{
+                        width: "64px",
+                        height: "64px",
+                        borderRadius: "50%",
+                        margin: "0 auto 16px",
+                        background: linearGradient(
+                          gradientColor.main,
+                          gradientColor.state
+                        ),
+                        boxShadow: `0 4px 20px ${rgba(gradientColor.main, 0.4)}`,
+                      }}
+                    >
+                      <VuiTypography variant="h3" color="white" fontWeight="bold">
+                        {idx + 1}
+                      </VuiTypography>
+                    </VuiBox>
+
+                    <VuiTypography 
+                      variant="button" 
+                      color="white" 
+                      fontWeight="bold" 
+                      mb="8px"
+                      sx={{ display: "block" }}
+                    >
+                      {user.name}
+                    </VuiTypography>
+
+                    <VuiTypography 
+                      variant="h3" 
+                      color="info" 
+                      fontWeight="bold" 
+                      mb="4px"
+                    >
+                      {user.meetings_held}
+                    </VuiTypography>
+                    
+                    <VuiTypography 
+                      variant="caption" 
+                      color="text" 
+                      fontWeight="medium" 
+                      mb="8px"
+                      sx={{ display: "block" }}
+                    >
+                      meetings
+                    </VuiTypography>
+                    
+                    <VuiTypography 
+                      variant="caption" 
+                      color="text" 
+                      sx={{ opacity: 0.6 }}
+                    >
+                      {user.clients_created} clients
                     </VuiTypography>
                   </VuiBox>
-
-                  <VuiTypography variant="button" color="white" fontWeight="bold" mb="8px">
-                    {user.name}
-                  </VuiTypography>
-
-                  <VuiTypography variant="h3" color="info" fontWeight="bold" mb="4px">
-                    {user.meetings_held}
-                  </VuiTypography>
-                  <VuiTypography variant="caption" color="text" fontWeight="medium" mb="8px">
-                    meetings
-                  </VuiTypography>
-                  <VuiTypography variant="caption" color="text" sx={{ opacity: 0.6 }}>
-                    {user.clients_created} clients
-                  </VuiTypography>
-                </VuiBox>
-              </Grid>
-            ))}
+                </Grid>
+              );
+            })}
           </Grid>
         </Card>
       </VuiBox>
