@@ -1,4 +1,4 @@
-// Dashboard.js - Multi-Company Version with Collapsible Sidebar
+// Dashboard.js - Multi-Company Version with Collapsible Sidebar and Background Image
 import React, { useState, useEffect } from "react";
 import { HardDrive, Package, TrendingUp, FileText, Users, LogOut, Home, RefreshCw, Settings, Sparkles, Phone, Building2, ChevronDown, Crown, ArrowRight, ChevronLeft, ChevronRight, Menu, Plus ,MapPin,CreditCard } from "lucide-react";
 
@@ -25,6 +25,13 @@ import PaymentSummaryDashboard from "./PaymentSummaryDashboard";
 // Import Vision UI theme
 import colors from "../assets/theme/base/colors";
 import linearGradient from "../assets/theme/functions/linearGradient";
+
+// IMPORT YOUR BACKGROUND IMAGE HERE
+// Option 1: If image is in public folder
+// const backgroundImage = "/path/to/your/background.png";
+
+// Option 2: If image is in src/assets folder
+import backgroundImage from "../assets/images/body-background.png";
 
 const API_BASE_URL = "https://geo-track-1.onrender.com";
 const { gradients, dark } = colors;
@@ -482,10 +489,37 @@ const Dashboard = () => {
   const mainMargin = sidebarCollapsed ? "ml-20" : "ml-72";
 
   return (
-    <div className="min-h-screen" style={{ background: dark.body }}>
+    <div 
+      className="min-h-screen"
+      style={{ 
+        // BACKGROUND IMAGE SETUP
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed', // Keeps background fixed while scrolling
+        
+        // Optional: Add overlay for better readability
+        position: 'relative',
+      }}
+    >
+      {/* Optional: Semi-transparent overlay for better text readability */}
+      <div 
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(10, 14, 35, 0.05)', // Dark overlay with 85% opacity
+          pointerEvents: 'none', // Allows clicks to pass through
+          zIndex: 0,
+        }}
+      />
+
       {/* Collapsible Sidebar */}
       <aside 
-  className={`fixed top-0 left-0 h-full ${sidebarWidth} flex flex-col transition-all duration-300`}
+  className={`fixed top-0 left 0 h-full ${sidebarWidth} flex flex-col transition-all duration-300`}
   style={{ 
     background: linearGradient(gradients.sidenav.main, gradients.sidenav.state, gradients.sidenav.deg),
     zIndex: 40 
@@ -769,7 +803,7 @@ const Dashboard = () => {
 </aside>
 
       {/* Main Content */}
-      <main className={`${mainMargin} p-8 transition-all duration-300`}>
+      <main className={`${mainMargin} p-8 transition-all duration-300 relative`} style={{ zIndex: 1 }}>
         {/* Top Bar */}
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-2xl font-bold text-white capitalize">
@@ -784,7 +818,7 @@ const Dashboard = () => {
                 className="w-12 h-12 rounded-xl flex items-center justify-center transition-all hover:scale-105"
                 style={{
                   background: linearGradient(gradients.info.main, gradients.info.state),
-                  boxShadow: '0 4px 12px rgba(0,117,255,0.4)',
+                  boxShadow: '0 4px 12px rgba(0, 117, 255, 0.4)',
                 }}
               >
                 <RefreshCw className="w-5 h-5 text-white" />
